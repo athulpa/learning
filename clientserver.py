@@ -53,3 +53,6 @@ def runClient():
             data = bytes(msg, 'utf-8')
             s.sendall(data)
         s.sendall(b'')
+        
+if __name__ == "__main__":
+    menu()
