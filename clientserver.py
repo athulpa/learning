@@ -12,14 +12,16 @@ def menu():
     print("1. Listen")
     print("2. Connect")
     action = input("?_ ")
+    print()
     if(action=="1"):
-        print("\nStarting Server...")
+        print("Starting Server...")
         runServer()
     elif(action=="2"):
-        print("\nStarting Client...")
+        print("Starting Client...")
         runClient()
     else:
         print("Invalid Option")
+        
         
 def runServer():
     print("Which local IP to listen on?")
@@ -31,7 +33,7 @@ def runServer():
     port = DEF_PORT if(resp=="") else int(resp)
     
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((SERVER_ADDRESS, port))
+        s.bind((addr, port))
         
         s.listen()
         
@@ -47,7 +49,7 @@ def runServer():
                 if(msg.lower()=="bye"):
                     break
             
-    
+
 def runClient():
     resp = input("IP Address (" + str(DEF_CONNECTION_IP) + "): ")
     addr = DEF_CONNECTION_IP if(resp=="") else resp
@@ -59,7 +61,7 @@ def runClient():
         s.connect((addr,port))
         print("Connected to", addr)
         print("Type messages to send ...\n")
-        while resp!='q':
+        while True:
             msg = input(">: ")
             data = bytes(msg, 'utf-8')
             s.sendall(data)
