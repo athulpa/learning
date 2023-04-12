@@ -4,14 +4,14 @@ import os
 
 class FileTree:
     def __init__(self, arg=None, **kwargs):
+        self._map = {}
         if(arg is None):        
-            self._map = {}
             return
         if(type(arg) is dict):                    # convert dict to a FileTree
             if('argCheck' in kwargs.keys() and kwargs['argCheck'] is False):
+                ### Only works if 'argCheck' is set to False
+                ### Allows the dev to set the _map attribute directly
                 self._map = arg
-            else:
-                pass
         elif(type(arg) == type(self)):            # copy con'r
             pass
         elif(type(arg) is str):
@@ -19,7 +19,7 @@ class FileTree:
             try:
                 flist = os.listdir(rootPath)
             except PermissionError:
-                self._map = {}
+                return
             else:
                 self._map = {i:None for i in flist}
                 for i in flist:
@@ -39,12 +39,26 @@ class FileTree:
         return not bool(self._map)
     
     
+    ####################
+    ## TYPE CONVERSION
+    ####################
     
+    def asDict(self):
+        return { (k):(self._map[k].asDict() if(self.isDir(k)) else None)
+                  for k in self._map.keys()}
+    @staticmethod
+    def fromDict(treeDict):
+        return FileTree(  
+                         {(k):(None if(treeDict[k] is None) else FileTree.fromDict(treeDict[k]))
+                                   for k in treeDict.keys()}
+                         , argCheck=False
+                    )
+        
     ######################
     ## PRINTING METHODS
     ######################
     
-    # Only top-level items
+    # Only top-level items (doesn't print the tree)
     def displayMethod0(self, preString='', separator='\n', endString='', folderMarker='', fileMarker=''):
         ret = preString
         for k in self._map.keys():
