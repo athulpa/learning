@@ -101,9 +101,9 @@ class FileTree:
     
     
     
-    ########################
+    #######################
     #  LOAD/SAVE METHODS
-    ########################
+    #######################
 
     def save(self, fileName):
         d = self.asDict()
@@ -116,6 +116,19 @@ class FileTree:
             d = json.load(inFile)
         return FileTree.fromDict(d)
     
+    
+    
+    ####################
+    #  COUNTING ALGO
+    ####################
+    
+    def numItems(self):
+        total = len(self.keys())
+        for k in self.keys():
+            if(self.isDir(k)):
+                total += self._map[k].numItems()
+        return total
+        
     
     
     ########################
