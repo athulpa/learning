@@ -1,6 +1,6 @@
 
 import os
-
+import json
 
 class FileTree:
     def __init__(self, arg=None, **kwargs):
@@ -12,8 +12,6 @@ class FileTree:
                 ### Only works if 'argCheck' is set to False
                 ### Allows the dev to set the _map attribute directly
                 self._map = arg
-        elif(type(arg) == type(self)):            # copy con'r
-            pass
         elif(type(arg) is str):
             rootPath = arg
             try:
@@ -39,6 +37,7 @@ class FileTree:
         return not bool(self._map)
     
     
+    
     ####################
     ## TYPE CONVERSION
     ####################
@@ -54,6 +53,8 @@ class FileTree:
                          , argCheck=False
                     )
         
+    
+    
     ######################
     ## PRINTING METHODS
     ######################
@@ -101,6 +102,23 @@ class FileTree:
     
     
     ########################
+    #  LOAD/SAVE METHODS
+    ########################
+
+    def save(self, fileName):
+        d = self.asDict()
+        with open(fileName, "w") as outFile:
+            json.dump(d, outFile)
+    
+    @staticmethod
+    def load(fileName):
+        with open(fileName, "r") as inFile:
+            d = json.load(inFile)
+        return FileTree.fromDict(d)
+    
+    
+    
+    ########################
     #  SET DIFFERENCE ALGO
     ########################
     
@@ -128,6 +146,7 @@ class FileTree:
         return FileTree(d, argCheck=False)
     
 
+
     ####################
     #  EQUALITY ALGOS
     ####################
@@ -143,6 +162,8 @@ class FileTree:
     # Deep Equality
     def isEqual_Deep(self, other):
         return (self._map == other._map)
+    
+    
     
     ########################
     #  PYTHONIC INTERFACE
