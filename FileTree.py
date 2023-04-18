@@ -54,7 +54,56 @@ class FileTree:
                     )
         
     
-    
+    # Encodes the file tree into a single string
+    def asString(self):
+        # raise NotImplementedError()
+        ret = ""
+        for k in self._map.keys():
+            ret  += k
+            if(self._map[k] is not None):
+                ret += "/" + self._map[k].asString()  + "\\"
+            else:
+                ret += '*'
+                
+        if((ret != '') and ret[-1]=='*'):     # remove trailing delimiter
+            ret = ret[:-1]
+        return ret
+            
+    # Decode the serialization that has been implemented for this class
+    @staticmethod
+    def fromString(serialDat, startPos = 0, returnStopPos = False):
+        d = {}
+        
+        pos = startPos
+        currName = ''
+        while(pos < len(serialDat)):
+            
+            ch = serialDat[pos]
+            if(ch == '\\'):
+                if(currName != ''):
+                    d[currName] = None
+                break
+            elif(ch == '*'):
+                if(currName != ''):
+                    d[currName] = None
+                    currName = ''
+            elif(ch == '/'):
+                d[currName], pos = FileTree.fromString(serialDat, 
+                                        startPos=(pos+1), returnStopPos = True)
+                currName = ''
+            else:
+                currName += ch
+            pos += 1
+        else:
+            d[currName] = None
+        
+        if(returnStopPos is True):
+            return FileTree(d, argCheck=False), pos
+        else:
+            return FileTree(d, argCheck=False)
+        
+        
+        
     ######################
     ## PRINTING METHODS
     ######################
