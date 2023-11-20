@@ -45,6 +45,7 @@ class FileTree:
     def asDict(self):
         return { (k):(self._map[k].asDict() if(self.isDir(k)) else None)
                   for k in self._map.keys()}
+    
     @staticmethod
     def fromDict(treeDict):
         return FileTree(  
@@ -126,7 +127,7 @@ class FileTree:
                 retString += self._map[i].displayMethod1(indentLvl+1,indentString)    
         return retString
 
-    # Show full tree with custom options
+    # Show full tree with more custom options
     def displayMethod2(self, preIndent='', indentString=' '*3, lineCharIdx=0, lineChars=['\\','/']):
         retString = ''
         for i in self._map.keys():
@@ -171,6 +172,7 @@ class FileTree:
     #  COUNTING ALGO
     ####################
     
+    # Counts the total number of items in the entire tree
     def numItems(self):
         total = len(self.keys())
         for k in self.keys():
@@ -220,7 +222,8 @@ class FileTree:
         for i in self.keys():
             if(i not in other.keys() or self.isDir(i)!=other.isDir(i)):
                 return False
-            
+        return True
+    
     # Deep Equality
     def isEqual_Deep(self, other):
         return (self._map == other._map)
@@ -238,7 +241,7 @@ class FileTree:
         return len(self._map)
     
     def __dir__(self):
-        return self._map.keys()
+        return list(self._map.keys())
     
     def __getattr__(self, name):
         if name!='_map':
